@@ -1,29 +1,29 @@
 ---
-published: false
+published: true
 layout: post
-title: fixing broken commit messages
+title: 깨진 커밋 메시지 고치기
 category: advanced
 ---
 
-You just committed that awesome feature/test/bug, but something just isn't right. Either some information isn't filled out, the commit message is wrong, or something else is just messed up. Let's go over what can be done to fix the associated data after the fact.
+당신은 지금 막 대단한 feature/test/bug를 커밋했는데, 뭔가 잘못되었다. 어떤 정보가 빠졌거나, 커밋 메시지가 잘못되었거나, 아니면 또 다른 뭔가가 엉망이다. 사고를 친 후에 그와 관련된 데이터들을 고치려면 무엇을 해야 하는지 지금부터 알아보자.
 
-Fixing the previous commit is very simple. Just use
+이전 커밋을 고치는 것은 간단하다. 그냥 이렇게 하면 된다.
 
 @git commit --amend@
 
-And that will fire up the commit patch in $EDITOR for you to mess with. Simply edit the message right on the top line of the file, save, quit and you're done. 
+그러면 당신이 커밋 패치를 손볼 수 있도록 $EDITOR로 띄워 줄 것이다. 그냥 파일 가장 위의 메시지를 고치고, 저장하고, 종료하면 끝난다.
 
-Now let's say you've got a few commits to fix, or the commit that is broken is a few commits back. This process is a little more complex, but isn't too bad. (Thanks to "Evan Phoenix":http://blog.fallingsnow.net/ for this one.)
+이제 여러 커밋을 고쳐야 하거나, 옛날에 했던 커밋이 깨진 것을 발견한 경우에 대해 이야기해보자. 이 프로세스는 약간 복잡하지만, 그렇게 심하진 않다. ("Evan Phoenix":http://blog.fallingsnow.net/ 에게 감사의 말을 전한다)
 
-Here's the scenario: the last 3 commits don't have the right username, email, or perhaps commit message. Let's start by generating patch files for the commits:
+여기 시나리오가 있다: 지난 세번의 커밋은 username, email, 혹은 커밋 메시지가 잘못되어있다. 이 커밋들에 대한 패치를 만드는 것에서 시작해보자.
 
 @git format-patch HEAD^^^@
 
-That will generate files in the form of 0001-commit-message that contains the commit diff and metadata. One note with the 3 caret symbols: just add one for each commit you need to go back, and be consistent! *EDIT:* You can also refer to past commits with the syntax HEAD~n, so for this example we'd use HEAD~3. Go ahead and edit these files so they have the proper information. Once that's done, we'll need to reset our repository back a few commits:
+이렇게 하면 commit diff와 메타데이터들이 포함된 파일들이 0001-commit-message 와 같은 형식으로 생성된다. ^^^(3 caret symbols)에 대해: 되돌아가고 싶은 커밋 당 ^를 하나씩 추가하면 된다. *추가:* HEAD~n 식의 문법으로도 이전 커밋을 참조할 수 있으므로, 이 경우에 우린 HEAD~3을 사용해왔다. 계속해서 이 파일들이 알맞은 정보를 갖도록 고쳐라. 이게 끝나면, 우리는 저장소를 예전 커밋으로 되돌릴 것이다.
 
 @git reset --hard HEAD^^^@
 
-Now we can apply each commit to fix the information. Make sure you do it in the right order! (Usually it's ascending)
+이제 우린 정보를 고치기 위해 각 커밋을 적용할 수 있다. 커밋 순서에 주의하라! (보통 오름차순이다)
 
 <pre>
 git am < 0001...
@@ -31,14 +31,14 @@ git am < 0002...
 git am < 0003...
 </pre>
 
-Now if you check @git log@ you should see the right information. If for some reason stuff got messed up, doing a 
+이제 @git log@ 를 체크해보면 정보가 바르게 들어가 있는 것을 볼 수 있다. 만약 어떤 이유로 뭔가 꼬였을 땐 다음과 같이 하면,
 
 @git reset --hard origin/master@
 
-will bring you back to your original changes. Once you've got the information fixed, you'll need to do a force push on the repo:
+저장소를 원래대로 돌려놓을 것이다. 정보가 바르게 고쳐졌다면, 저장소에 강제로 push 할 필요가 있다.
 
 @git push -f@
 
-If you don't add the @-f@, git will complain. *WARNING!* Just be aware that modifying commit messages may muck up other's repositories and should be used with caution. In fact, other developers may flat out hate you for doing this. If it's far back enough it's probably a "bad idea to rewrite history anyway.":http://www.youtube.com/watch?v=BytKSy8M4bk
+만약 -f 를 빠뜨리면 git가 불평한다. *주의!* 커밋 메시지를 수정하는 것은 다른 사람들의 저장소를 망칠 수 있으므로 조심스럽게 사용해야 함을 명심하라. 사실 이런 짓을 하면, 다른 개발자들은 아마 당신을 맹렬히 싫어할 것이다. 예전 같았으면, 이건 아마 "역사를 무작정 고쳐쓰려는 나쁜 생각": http://www.youtube.com/watch?v=BytKSy8M4bk 이었을 것이다.
 
-If you know of any unexpected or uncovered consequences please let us know in the comments. Another tip in the future will cover fixing the actual committed files and making sure that all repos are up to date.
+여기서 빠뜨린 것이 있거나 예상치 못한 상황을 만났다면 댓글로 알려달라. 나중에 올릴 팁에서는 실제로 커밋된 파일을 고치고 모든 저장소에 반영하는 방법에 대해 다룰 것이다.
