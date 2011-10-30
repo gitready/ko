@@ -1,21 +1,21 @@
 ---
-published: false
+published: true
 layout: post
-title: squashing commits with rebase
+title: rebase 로 커밋 합치기
 category: advanced
 ---
 
-The "rebase":http://gitready.com/intermediate/2009/01/31/intro-to-rebase.html command has some awesome options available in its @--interactive@ (or @-i@) mode, and one of the most widely used is the ability to squash commits. What this does is take smaller commits and combine them into larger ones, which could be useful if you're wrapping up the day's work or if you just want to package your changes differently. We're going to go over how you can do this easily.
+"rebase":http://gitready.com/intermediate/2009/01/31/intro-to-rebase.html 명령은 @--interactive@ (혹은 @-i@) 모드일 때 굉장한 옵션들을 사용할 수 있으며, 커밋들을 합치고 싶을 때 가장 널리 사용되는 명령 중 하나이다. 이 명령이 하는 일은 작은 커밋들을 결합하여 하나의 큰 커밋으로 만드는 것이며, 만약 당신이 그날 한 일을 마무리지으려 하거나 아니면 그냥 서로 다른 변경사항들을 묶고 싶어졌을 때 유용하다. 우리는 이제 이런 일들을 어떻게 쉽게 할 수 있는지 알아볼 것이다.
 
 p=. "!http://farm4.static.flickr.com/3073/2926413646_8e4a7b7db4.jpg?v=0!":http://flickr.com/photos/7552532@N07/2926413646/
 
-*A word of caution:* Only do this on commits that haven't been pushed an external repository. If others have based work off of the commits that you're going to delete, plenty of conflicts can occur. Just don't rewrite your history if it's been shared with others. 
+*주의사항 한마디:* 오직 외부 저장소에 push 되지 않은 커밋에 대해서만 이 기능을 사용하라. 만약 다른 사람들이 당신이 삭제하려고 하는 커밋에 기반을 둔 작업을 하고 있다면, 꽤 많은 충돌이 발생할 것이다.  쉽게 말해 다른 사람과 공유하고 있는 역사를 고쳐쓰지 말라.
 
-So let's say you've just made a few small commits, and you want to make one larger commit out of them. Our repository's history currently looks like this:
+그럼 당신이 커밋을 몇번 했고, 그것들을 합쳐서 큰 커밋 하나로 만들고 싶다고 하자. 우리 저장소의 역사는 현재 다음과 같다.
 
 p=. !/images/squash1.png!
 
-The last 4 commits would be much happier if they were wrapped up together, so let's do just that through interactive rebasing:
+이 최근 4개의 커밋들은 하나로 합쳐지면 더 행복해할 것 같으니, interactive rebasing으로 그걸 해보자:
 
 <pre>
 $ git rebase -i HEAD~4
@@ -37,7 +37,7 @@ pick 30e0ccb Changed the tagline in the binary, too.
 #
 </pre>
 
-So, a few things have happened here. First of all, I told Git that I wanted to rebase using the last four commits from where the @HEAD@ is with @HEAD~4@. Git has now put me into an editor with the above text in it, and a little explanation of what can be done. You have plenty of options available to you from this screen, but right now we're just going to squash everything into one commit. So, changing the first four lines of the file to this will do the trick:
+자, 몇가지 일들이 여기서 일어났다. 우선, 나는 Git에게 @HEAD@ 부터 @HEAD~4@ 까지 지난 네 커밋을 rebase 하고 싶다고 말했다. Git는 이제 무엇을 할 수 있는지에 대한 약간의 설명을 포함한 위의 텍스트와 함께 나를 편집기로 보냈다. 화면에 여러가지 옵션들이 나타났지만, 지금 우리는 그냥 커밋들을 하나로 합치는 것만 할 것이다. 자, 위 파일의 첫 네 줄을 이렇게 바꾸면 된다:
 
 <pre>
 pick 01d1124 Adding license
@@ -46,7 +46,7 @@ squash ebfd367 Jekyll has become self-aware.
 squash 30e0ccb Changed the tagline in the binary, too.
 </pre>
 
-Basically this tells Git to combine all four commits into the the first commit in the list. Once this is done and saved, another editor pops up with the following:
+기본적으로 이것은 Git에게 나열된 네 커밋을 하나의 커밋으로 합쳐달라고 말해준다. 일단 저장하면 다음과 같이 또 에디터가 실행된다:
 
 <pre>
 # This is a combination of 4 commits.
@@ -79,6 +79,7 @@ Changed the tagline in the binary, too.
 #
 </pre>
 
+우리가 여러 커밋들을 합쳤기 때문에, Git은 당신에게 이 작업과 관련된 커밋들의 메시지로 새 커밋 메시지를 작성할 수 있게 해준다. 메시지를 원하는 대로 수정하고, 저장하고, 종료하라. 그렇게 하면 당신의 커밋들은 성공적으로 합쳐진다!
 Since we're combining so many commits, Git allows you to modify the new commit's message based on the rest of the commits involved in the process. Edit the message as you see fit, then save and quit. Once that's done, your commits have been successfully squashed!
 
 <pre>
@@ -88,10 +89,10 @@ Created commit 0fc4eea: Creating license file, and making jekyll self-aware.
 	Successfully rebased and updated refs/heads/master.
 </pre>
 
-And if we look at the history again...
+그리고 우리가 히스토리를 다시 들여다보면...
 
 p=. !/images/squash2.png!
 
-So, this has been a relatively painless so far. If you run into conflicts during the rebase, they're usually quite easy to resolve and Git leads you through as much as possible. The basics of this is fix the conflict in question, @git add@ the file, and then @git rebase --continue@ will resume the process. Of course, doing a @git rebase --abort@ will bring you back to your previous state if you want. If for some reason you've lost a commit in the rebase, you can use the "reflog":http://gitready.com/intermediate/2009/02/09/reflog-your-safety-net.html to get it back.
+이건 상대적으로 그다지 괴롭지 않다. 만약 당신이 rebase 중에 충돌 상태로 들어갔다면 그건 resolve 하기 상당히 쉽고 Git는 당신이 그걸 할 수 있도록 안내해 줄 것이다. 기본적으로 질문받은 충돌을 고치고, 그 파일을 @git add@ 하고, @git rebase --continue@ 로 계속 진행하면 된다. 물론 원한다면 @git rebase --abort@ 로 이전 상태로 돌아갈 수 있다. 어떤 이유로 인해 rebase 과정에서 커밋을 잃어버렸다면, "reflog":http://gitready.com/intermediate/2009/02/09/reflog-your-safety-net.html 를 사용해 되돌릴 수 있다.
 
-There's plenty of other uses for @git rebase -i@ that haven't been covered yet. If you have one you'd like to share, "please do so!":/submit.html "GitCasts":http://gitcasts.com also has a "fantastic video":http://gitcasts.com/posts/rebasing on this process as a whole that also covers some more complex examples of the command.
+여기서 다루지 않은 @git rebase -i@ 의 사용법이 상당히 많다. 혹시 공유하고 싶은 것이 있다면, "부디 그렇게 해달라!":/submit.html "GitCasts":http://gitcasts.com 에도, 이 과정 전반 및 더 복잡한 예제도 다루고 있는 "환상적인 영상":http://gitcasts.com/posts/rebasing 이 올라와 있다.
