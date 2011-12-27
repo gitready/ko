@@ -80,7 +80,6 @@ Changed the tagline in the binary, too.
 </pre>
 
 우리가 여러 커밋들을 합쳤기 때문에, Git은 당신에게 이 작업과 관련된 커밋들의 메시지로 새 커밋 메시지를 작성할 수 있게 해준다. 메시지를 원하는 대로 수정하고, 저장하고, 종료하라. 그렇게 하면 당신의 커밋들은 성공적으로 합쳐진다!
-Since we're combining so many commits, Git allows you to modify the new commit's message based on the rest of the commits involved in the process. Edit the message as you see fit, then save and quit. Once that's done, your commits have been successfully squashed!
 
 <pre>
 Created commit 0fc4eea: Creating license file, and making jekyll self-aware.
